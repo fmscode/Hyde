@@ -26,7 +26,8 @@ version(){
 addPost(){
 	currentDate=`date +%Y-%m-%d`
 	fullDateTime=`date +%Y-%m-%d' '%T`
-	postContent="---
+postContent="
+---
 layout: $2
 title: $3
 date: $fullDateTime
@@ -102,12 +103,13 @@ postsDirectory(){
 #
 scriptHelp(){
 	case $1 in
-		"post" | "add" )
+		"post" )
 			cat <<-EndAddHelp
+			  Usage: post "[title]" [options]
 			  Action: post|add
 			  Options:
-				    -f: Post Title
-				    -t: Post Layout
+				    title: Post Title
+				    -l: Post Layout
 			EndAddHelp
 		;;
 		"micro" )
@@ -141,24 +143,20 @@ action=$1
 shift 1
 # Logic for each action
 case $action in
-	"post" | "add" )
+	"post" )
 		checkPostsDirectory
+		# Post title is given
+		postTitle=$1
+		# File name is the post title without any space characters
+		fileName=`echo "$postTitle" | tr ' ' '-'`
+		shift;
 		# Read in the options that the add Action supports
-		while getopts "f:t:" Option
+		while getopts "l:" Option
 			do
 				case $Option in
-					'f' )
-						# Post title is given
-						postTitle=$OPTARG
-						# File name is the post title without any space characters
-						fileName=`echo "$postTitle" | tr ' ' '-'`
-					;;
-					't' )
+					'l' )
 						# Defines the layout the post to use, used for Jekyll templates
 						layout=$OPTARG
-					;;
-					'h' )
-
 					;;
 				esac
 		done
