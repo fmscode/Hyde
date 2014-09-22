@@ -35,6 +35,7 @@ date: $fullDateTime
 	cat <<EOF > $(postsDirectory)/$currentDate-$1.md
 	$postContent
 EOF
+	open "$(postsDirectory)/$currentDate-$1.md"
 }
 
 
