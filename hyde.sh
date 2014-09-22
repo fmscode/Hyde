@@ -114,21 +114,28 @@ scriptHelp(){
 			EndAddHelp
 		;;
 		"micro" )
-			cat <<-EndMicorHelp
+			cat <<-EndMicroHelp
 			  Action: micro
 			  Usage: micro "[content]" [options]
 			  Options:
 				    content: The content of the micro post.
 				    -l: A micropost link
-			EndMicorHelp
+			EndMicroHelp
+		;;
+		"view" )
+			cat <<-EndViewHelp
+			  Action: view
+			  Description: Opens the _posts directory
+			EndViewHelp
 		;;
 		* )
 			cat <<-EndHelp
 			  Usage: hyde [action] [options]
 
 			  Actions:
-				    post|add "A new post to be added."
+				    post|add "A new post to be added"
 				    micro "A new micropost"
+				    view "Opens the _posts directory"
 			  
 			  'hyde help [action]' for help on the action
 			EndHelp
@@ -206,7 +213,10 @@ case $action in
 				addMicroPost "$fileName" "$postContent" "$link"
 			fi
 		fi
-
+	;;
+	"view" )
+		open "$(postsDirectory)"
+		exit;
 	;;
 	"version" | "v" )
 		version
