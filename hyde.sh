@@ -4,6 +4,19 @@
 export JEKYLL_DIR="/Users/orion/developer/sites/fmscode.github.io/_posts"
 export MICRO_POST_LENGTH=240
 
+# Function: version
+# Description: Current version information
+#
+version(){
+	cat <<-EndVersion
+		Hyde
+
+		Version: 0.1
+		Original conception by: Frank Michael Sanchez
+		License: MIT, http://choosealicense.com
+	EndVersion
+}
+
 # Function: addPost
 # Parameters: $1: Filename
 #			  $2: Template name, Optional
@@ -11,14 +24,15 @@ export MICRO_POST_LENGTH=240
 # Description: Creates a new post in the _posts directory
 #
 addPost(){
-currentDate=`date +%Y-%m-%d`
-fullDateTime=`date +%Y-%m-%d' '%T`
-cat <<EOF > $(postsDirectory)/$currentDate-$1.md
----
+	currentDate=`date +%Y-%m-%d`
+	fullDateTime=`date +%Y-%m-%d' '%T`
+	postContent="---
 layout: $2
 title: $3
 date: $fullDateTime
----
+---"
+	cat <<EOF > $(postsDirectory)/$currentDate-$1.md
+	$postContent
 EOF
 }
 
@@ -30,27 +44,25 @@ EOF
 # Description: Function to add a new micro post
 #
 addMicroPost(){
-# Time/date for post
-currentDate=`date +%Y-%m-%d`
-fullDateTime=`date +%Y-%m-%d' '%T`
-# Basic post content
-postContent="
----
+	# Time/date for post
+	currentDate=`date +%Y-%m-%d`
+	fullDateTime=`date +%Y-%m-%d' '%T`
+	# Basic post content
+	postContent="---
 layout: post
 title: $1
 date: $fullDateTime
 tags: micropost
 ---
 $2"
-# Check if a link was passed with this post
-if [ ${#3} -ne 0 ]
-then
-postContent="$postContent 
+	# Check if a link was passed with this post
+	if [ ${#3} -ne 0 ]; then
+	postContent="$postContent 
 
-[$3]($3)"
-fi
+	[$3]($3)"
+	fi
 # Create file
-cat <<EOF > $(postsDirectory)/$currentDate-$1.md
+	cat <<EOF > $(postsDirectory)/$currentDate-$1.md
 	$postContent
 EOF
 }
@@ -92,24 +104,19 @@ scriptHelp(){
 	case $1 in
 		"post" | "add" )
 			cat <<-EndAddHelp
-			Action: post|add
-			Options:
-				  -f
-				    Post Title
-				  -t
-				    Post Layout
-
+			  Action: post|add
+			  Options:
+				    -f: Post Title
+				    -t: Post Layout
 			EndAddHelp
 		;;
 		"micro" )
 			cat <<-EndMicorHelp
-			Action: micro
-			Usage: micro [content] [options]
-			Options:
-				  content
-				    The content of the micro post.
-				  -l
-				    A micropost link
+			  Action: micro
+			  Usage: micro "[content]" [options]
+			  Options:
+				    content: The content of the micro post.
+				    -l: A micropost link
 			EndMicorHelp
 		;;
 		* )
@@ -117,10 +124,10 @@ scriptHelp(){
 			  Usage: hyde [action] [options]
 
 			  Actions:
-				    add|a "A new post to be added."
+				    post|add "A new post to be added."
 				    micro "A new micropost"
 			  
-			  'hyde [action] -h' for help on the action
+			  'hyde help [action]' for help on the action
 			EndHelp
 		;;
 	esac
@@ -156,12 +163,12 @@ case $action in
 				esac
 		done
 		# Check post title length
-		if [ ${#postTitle} == 0 ]; then
+		if [ ${#postTitle} -eq 0 ]; then
 			echo "Invalid post title"
 			exit;
 		fi
 		# Set default for the layout if layout is not set
-		if [ ${#layout} == 0 ]; then
+		if [ ${#layout} -eq 0 ]; then
 			layout=post
 		fi
 		# Create post file
@@ -201,6 +208,9 @@ case $action in
 			fi
 		fi
 
+	;;
+	"version" | "v" )
+		version
 	;;
 	"help" )
 		scriptHelp "$1"
