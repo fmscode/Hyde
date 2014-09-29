@@ -25,9 +25,8 @@ version(){
 #
 addPost(){
 	currentDate=`date +%Y-%m-%d`
-	fullDateTime=`date +%Y-%m-%d' '%T`
-postContent="
----
+	fullDateTime=`date +%Y-%m-%d' '%T' '%z`
+postContent="---
 layout: $2
 title: $3
 date: $fullDateTime
@@ -48,7 +47,7 @@ EOF
 addMicroPost(){
 	# Time/date for post
 	currentDate=`date +%Y-%m-%d`
-	fullDateTime=`date +%Y-%m-%d' '%T`
+	fullDateTime=`date +%Y-%m-%d' '%T' '%z`
 	# Basic post content
 	postContent="---
 layout: post
