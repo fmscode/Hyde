@@ -26,13 +26,13 @@ version(){
 addPost(){
 	currentDate=`date +%Y-%m-%d`
 	fullDateTime=`date +%Y-%m-%d' '%T' UTC'`
-postContent="---
+	postContent="---
 layout: $2
 title: $3
 date: $fullDateTime
 ---"
 	cat <<EOF > $(postsDirectory)/$currentDate-$1.md
-	$postContent
+$postContent
 EOF
 	open "$(postsDirectory)/$currentDate-$1.md"
 }
@@ -64,7 +64,7 @@ $2"
 	fi
 # Create file
 	cat <<EOF > $(postsDirectory)/$currentDate-$1.md
-	$postContent
+$postContent
 EOF
 }
 
