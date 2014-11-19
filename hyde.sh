@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Configuration #
-export JEKYLL_DIR="/Users/orion/developer/sites/fmscode.github.io/_posts"
+export JEKYLL_DIR="/Users/orion/developer/sites/fmscode.github.io/"
 export MICRO_POST_LENGTH=240
 
 # Function: version
@@ -21,22 +21,26 @@ version(){
 # Parameters: $1: Filename
 #			  $2: Template name, Optional
 #			  $3: Post Title 
+# 			  $4: Draft Status, Defaults to false
 # Description: Creates a new post in the _posts directory
 #
 addPost(){
 	currentDate=`date +%Y-%m-%d`
 	fullDateTime=`date +%Y-%m-%d' '%T' UTC'`
+	directory=postsDirectory
+	if $4; then
+		directory=draftsDirectory
+	fi 
 	postContent="---
 layout: $2
 title: $3
 date: $fullDateTime
 ---"
-	cat <<EOF > $(postsDirectory)/$currentDate-$1.md
+	cat <<EOF > $($directory)/$currentDate-$1.md
 $postContent
 EOF
-	open "$(postsDirectory)/$currentDate-$1.md"
+	open "$($directory)/$currentDate-$1.md"
 }
-
 
 # Function: addMicroPost
 # Parameters: $1: FileName
@@ -73,7 +77,7 @@ EOF
 #
 checkPostsDirectory(){
 	if [ ${#JEKYLL_DIR} -ne 0 ]; then
-		if [ ! -d "$JEKYLL_DIR" ]; then
+		if [ ! -d "$JEKYLL_DIR/_posts" ]; then
 			echo "Invalid Jekyll Posts location"
 			exit;
 		fi
@@ -91,9 +95,20 @@ checkPostsDirectory(){
 #
 postsDirectory(){
 	if [ ${#JEKYLL_DIR} -ne 0 ]; then
-		echo $JEKYLL_DIR
+		echo "$JEKYLL_DIR/_drafts"
 	else
 		echo "${PWD}/_posts"
+	fi
+}
+
+# Function: draftsDirectory
+# Description: Returns the Jekyll _drafts directory
+#
+draftsDirectory(){
+	if [ ${#JEKYLL_DIR} -ne 0 ]; then
+		echo "$JEKYLL_DIR/_drafts"
+	else
+		echo "${PWD}/_drafts"
 	fi
 }
 
@@ -157,13 +172,17 @@ case $action in
 		# File name is the post title without any space characters
 		fileName=`echo "$postTitle" | tr ' ' '-'`
 		shift;
+		draft=false
 		# Read in the options that the add Action supports
-		while getopts "l:" Option
+		while getopts "l:d" Option
 			do
 				case $Option in
 					'l' )
 						# Defines the layout the post to use, used for Jekyll templates
 						layout=$OPTARG
+					;;
+					'd' )
+						draft=true
 					;;
 				esac
 		done
@@ -177,7 +196,7 @@ case $action in
 			layout=post
 		fi
 		# Create post file
-		addPost "$fileName" "$layout" "$postTitle"
+		addPost "$fileName" "$layout" "$postTitle" "$draft"
 	;;
 	"micro" )
 		checkPostsDirectory
