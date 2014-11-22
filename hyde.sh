@@ -95,7 +95,7 @@ checkPostsDirectory(){
 #
 postsDirectory(){
 	if [ ${#JEKYLL_DIR} -ne 0 ]; then
-		echo "$JEKYLL_DIR/_drafts"
+		echo "$JEKYLL_DIR/_posts"
 	else
 		echo "${PWD}/_posts"
 	fi
